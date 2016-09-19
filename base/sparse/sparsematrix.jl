@@ -2164,9 +2164,6 @@ broadcast{Tf,T}(f::Tf, A::SparseMatrixCSC, ::Type{T}) = broadcast(x -> f(x, T), 
 conj!(A::SparseMatrixCSC) = (broadcast!(conj, A.nzval, A.nzval); A)
 (-)(A::SparseMatrixCSC) = SparseMatrixCSC(A.m, A.n, copy(A.colptr), copy(A.rowval), map(-, A.nzval))
 
-# TODO: The following definitions should be deprecated.
-ceil{To}(::Type{To}, A::SparseMatrixCSC) = ceil.(To, A)
-
 
 ## Binary arithmetic and boolean operators
 (+)(A::SparseMatrixCSC, B::SparseMatrixCSC) = map(+, A, B)
