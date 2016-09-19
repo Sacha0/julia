@@ -2166,7 +2166,6 @@ conj!(A::SparseMatrixCSC) = (broadcast!(conj, A.nzval, A.nzval); A)
 
 # TODO: The following definitions should be deprecated.
 ceil{To}(::Type{To}, A::SparseMatrixCSC) = ceil.(To, A)
-floor{To}(::Type{To}, A::SparseMatrixCSC) = floor.(To, A)
 
 
 ## Binary arithmetic and boolean operators
