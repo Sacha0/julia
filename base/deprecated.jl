@@ -1411,4 +1411,9 @@ end
 @deprecate complex(a::Real, B::AbstractArray)           complex.(a, B)
 @deprecate complex(A::AbstractArray, B::AbstractArray)  complex.(A, B)
 
+# Deprecate manually vectorized div methods in favor of compact broadcast syntax
+@deprecate div(A::Number, B::AbstractArray) div.(A, B)
+@deprecate div(A::AbstractArray, B::Number) div.(A, B)
+@deprecate div(A::AbstractArray, B::AbstractArray) div.(A, B)
+
 # End deprecations scheduled for 0.6
