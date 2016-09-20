@@ -1357,4 +1357,7 @@ for f in (:sec, :sech, :secd, :asec, :asech,
     @eval @deprecate $f{T<:Number}(A::AbstractArray{T}) $f.(A)
 end
 
+# Deprecate manually vectorized clamp methods in favor of compact broadcast syntax
+@deprecate clamp(A::AbstractArray, lo, hi) clamp.(A, lo, hi)
+
 # End deprecations scheduled for 0.6
