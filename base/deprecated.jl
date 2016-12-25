@@ -1406,4 +1406,9 @@ end
 @deprecate big{T<:AbstractFloat,N}(A::AbstractArray{Complex{T},N}) big.(A)
 @deprecate big{T<:Integer,N}(x::AbstractArray{Complex{Rational{T}},N}) big.(A)
 
+# Deprecate vectorized two-argument complex in favor of compact broadcast syntax
+@deprecate complex(A::AbstractArray, b::Real)           complex.(A, b)
+@deprecate complex(a::Real, B::AbstractArray)           complex.(a, B)
+@deprecate complex(A::AbstractArray, B::AbstractArray)  complex.(A, B)
+
 # End deprecations scheduled for 0.6
