@@ -47,7 +47,7 @@ A_mul_B(A::SparseMatrixCSC, B::StridedVecOrMat) = A_mul_B!(_argstuple_AqmulB!(A,
 At_mul_B(A::SparseMatrixCSC, B::StridedVecOrMat) = At_mul_B!(_argstuple_AqmulB!(A, B)...)
 Ac_mul_B(A::SparseMatrixCSC, B::StridedVecOrMat) = Ac_mul_B!(_argstuple_AqmulB!(A, B)...)
 _argstuple_AqmulB!{TvA,TB}(A::SparseMatrixCSC{TvA}, b::StridedVector{TB}) =
-    (R = promote_type(TvA, TB); (one(R), A, B, zero(R), similar(b, R, A.n)))
+    (R = promote_type(TvA, TB); (one(R), A, b, zero(R), similar(b, R, A.n)))
 _argstuple_AqmulB!{TvA,TB}(A::SparseMatrixCSC{TvA}, B::StridedMatrix{TB}) =
     (R = promote_type(TvA, TB); (one(R), A, B, zero(R), similar(B, R, (A.n, size(B,2)))))
 
