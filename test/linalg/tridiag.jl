@@ -42,14 +42,14 @@ guardsrand(123) do
                 c += im*convert(Vector{elty}, randn(n - 1))
             end
         end
-        @test_throws DimensionMismatch SymTridiagonal(dl, ones(elty, n + 1))
+        @test_throws DimensionMismatch SymTridiagonal(dl, fill(elty(1), n+1))
         @test_throws ArgumentError SymTridiagonal(rand(n, n))
         @test_throws ArgumentError Tridiagonal(dl, dl, dl)
         @test_throws ArgumentError convert(SymTridiagonal{elty}, Tridiagonal(dl, d, du))
 
         if elty != Int
             @testset "issue #1490" begin
-                @test det(ones(elty,3,3)) ≈ zero(elty) atol=3*eps(real(one(elty)))
+                @test det(fill(elty(1),3,3)) ≈ zero(elty) atol=3*eps(real(one(elty)))
                 @test det(SymTridiagonal(elty[],elty[])) == one(elty)
             end
         end

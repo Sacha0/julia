@@ -249,13 +249,13 @@ end
 
 # issue #20389
 @testset "1 row/col vec*mat" begin
-    let x=[1,2,3], A=ones(1,4), y=x', B=A', C=x.*A
+    let x=[1,2,3], A=fill(1.,1,4), y=x', B=A', C=x.*A
         @test x*A == y'*A == x*B' == y'*B' == C
         @test A'*x' == A'*y == B*x' == B*y == C'
     end
 end
 @testset "complex 1 row/col vec*mat" begin
-    let x=[1,2,3]*im, A=ones(1,4)*im, y=x', B=A', C=x.*A
+    let x=[1,2,3]*im, A=fill(1.,1,4)*im, y=x', B=A', C=x.*A
         @test x*A == y'*A == x*B' == y'*B' == C
         @test A'*x' == A'*y == B*x' == B*y == C'
     end
@@ -277,7 +277,7 @@ end
 end
 
 @testset "ambiguity between * methods with RowVectors and ConjRowVectors (#20971)" begin
-    @test RowVector(ConjArray(ones(4))) * ones(4) == 4
+    @test (x = fill(1., 4); RowVector(ConjArray(x)) * x == 4)
 end
 
 @testset "setindex!/getindex" begin

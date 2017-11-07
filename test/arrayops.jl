@@ -8,7 +8,7 @@ using Main.TestHelpers.OAs
     @test length([1, 2, 3]) == 3
     @test count(!iszero, [1, 2, 3]) == 3
 
-    let a = ones(4), b = a+a, c = a-a
+    let a = fill(1., 4), b = a+a, c = a-a
         @test b[1] === 2. && b[2] === 2. && b[3] === 2. && b[4] === 2.
         @test c[1] === 0. && c[2] === 0. && c[3] === 0. && c[4] === 0.
     end
@@ -42,7 +42,7 @@ using Main.TestHelpers.OAs
     @test isequal([1,2,5] .<< [1,2,5], [2,8,160])
     @test isequal([10,20,50] .>> [1,2,5], [5,5,1])
 
-    a = ones(2,2)
+    a = fill(1.,2,2)
     a[1,1] = 1
     a[1,2] = 2
     a[2,1] = 3
@@ -53,7 +53,7 @@ using Main.TestHelpers.OAs
     a[[1 2 3 4]] = 0
     @test a == zeros(2,2)
     a[[1 2], [1 2]] = 1
-    @test a == ones(2,2)
+    @test a == fill(1.,2,2)
     a[[1 2], 1] = 0
     @test a[1,1] == 0. && a[1,2] == 1. && a[2,1] == 0. && a[2,2] == 1.
     a[:, [1 2]] = 2
@@ -463,7 +463,7 @@ end
     @test find(!iszero, (i % 2 for i in 1:10)) == collect(1:2:9)
 end
 @testset "findn" begin
-    b = findn(ones(2,2,2,2))
+    b = findn(fill(1,2,2,2,2))
     @test (length(b[1]) == 16)
     @test (length(b[2]) == 16)
     @test (length(b[3]) == 16)
@@ -589,7 +589,7 @@ Base.hash(::HashCollision, h::UInt) = h
 
 # All rows and columns unique
 let A, B, C, D
-    A = ones(10, 10)
+    A = fill(1., 10, 10)
     A[diagind(A)] = shuffle!([1:10;])
     @test unique(A, 1) == A
     @test unique(A, 2) == A
@@ -966,7 +966,7 @@ end
     end
 
     # issue #3613
-    b = mapslices(sum, ones(2,3,4), [1,2])
+    b = mapslices(sum, fill(1.,2,3,4), [1,2])
     @test size(b) === (1,1,4)
     @test all(b.==6)
 
@@ -981,26 +981,26 @@ end
 
     # issue #5177
 
-    c = ones(2,3,4)
-    m1 = mapslices(x-> ones(2,3), c, [1,2])
-    m2 = mapslices(x-> ones(2,4), c, [1,3])
-    m3 = mapslices(x-> ones(3,4), c, [2,3])
+    c = fill(1,2,3,4)
+    m1 = mapslices(x-> fill(1,2,3), c, [1,2])
+    m2 = mapslices(x-> fill(1,2,4), c, [1,3])
+    m3 = mapslices(x-> fill(1,3,4), c, [2,3])
     @test size(m1) == size(m2) == size(m3) == size(c)
 
-    n1 = mapslices(x-> ones(6), c, [1,2])
-    n2 = mapslices(x-> ones(6), c, [1,3])
-    n3 = mapslices(x-> ones(6), c, [2,3])
-    n1a = mapslices(x-> ones(1,6), c, [1,2])
-    n2a = mapslices(x-> ones(1,6), c, [1,3])
-    n3a = mapslices(x-> ones(1,6), c, [2,3])
+    n1 = mapslices(x-> fill(1,6), c, [1,2])
+    n2 = mapslices(x-> fill(1,6), c, [1,3])
+    n3 = mapslices(x-> fill(1,6), c, [2,3])
+    n1a = mapslices(x-> fill(1,1,6), c, [1,2])
+    n2a = mapslices(x-> fill(1,1,6), c, [1,3])
+    n3a = mapslices(x-> fill(1,1,6), c, [2,3])
     @test size(n1a) == (1,6,4) && size(n2a) == (1,3,6)  && size(n3a) == (2,1,6)
     @test size(n1) == (6,1,4) && size(n2) == (6,3,1)  && size(n3) == (2,6,1)
 
     # mutating functions
-    o = ones(3, 4)
+    o = fill(1, 3, 4)
     m = mapslices(x->fill!(x, 0), o, 2)
     @test m == zeros(3, 4)
-    @test o == ones(3, 4)
+    @test o == fill(1, 3, 4)
 
     # issue #18524
     m = mapslices(x->tuple(x), [1 2; 3 4], 1)
@@ -1059,10 +1059,10 @@ end
     @test lexless(asc[:,2],asc[:,3])
 
     # mutating functions
-    o = ones(3, 4)
+    o = fill(1, 3, 4)
     m = mapslices(x->fill!(x, 0), o, 2)
     @test m == zeros(3, 4)
-    @test o == ones(3, 4)
+    @test o == fill(1, 3, 4)
 
     asr = sortrows(a, rev=true)
     @test lexless(asr[2,:],asr[1,:])
@@ -1102,7 +1102,7 @@ end
 
 @testset "fill" begin
     @test fill!(Array{Float64}(1),-0.0)[1] === -0.0
-    A = ones(3,3)
+    A = fill(1,3,3)
     S = view(A, 2, 1:3)
     fill!(S, 2)
     S = view(A, 1:2, 3)
@@ -2043,7 +2043,7 @@ end # module AutoRetType
 
 @testset "concatenations of dense matrices/vectors yield dense matrices/vectors" begin
     N = 4
-    densevec = ones(N)
+    densevec = fill(1., N)
     densemat = diagm(0 => ones(N))
     # Test that concatenations of homogeneous pairs of either dense matrices or dense vectors
     # (i.e., Matrix-Matrix concatenations, and Vector-Vector concatenations) yield dense arrays

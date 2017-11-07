@@ -2,7 +2,7 @@
 
 @testset "UMFPACK wrappers" begin
     se33 = speye(3)
-    do33 = ones(3)
+    do33 = fill(1., 3)
     @test isequal(se33 \ do33, do33)
 
     # based on deps/Suitesparse-4.0.2/UMFPACK/Demo/umfpack_di_demo.c
@@ -118,8 +118,8 @@
             (Int, Float64),
         )
 
-        F = lufact(sparse(ones(Tin, 1, 1)))
-        L = sparse(ones(Tout, 1, 1))
+        F = lufact(sparse(fill(Tin(1), 1, 1)))
+        L = sparse(fill(Tout(1), 1, 1))
         @test F[:p] == F[:q] == [1]
         @test F[:Rs] == [1.0]
         @test F[:L] == F[:U] == L
@@ -127,12 +127,12 @@
     end
 
     @testset "BigFloat not supported" for T in (BigFloat, Complex{BigFloat})
-        @test_throws ArgumentError lufact(sparse(ones(T, 1, 1)))
+        @test_throws ArgumentError lufact(sparse(fill(T(1), 1, 1)))
     end
 
     @testset "size(::UmfpackLU)" begin
         m = n = 1
-        F = lufact(sparse(ones(m, n)))
+        F = lufact(sparse(fill(1., m, n)))
         @test size(F) == (m, n)
         @test size(F, 1) == m
         @test size(F, 2) == n

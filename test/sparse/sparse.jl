@@ -1,8 +1,8 @@
 # This file is a part of Julia. License is MIT: https://julialang.org/license
 
 @testset "issparse" begin
-    @test issparse(sparse(ones(5,5)))
-    @test !issparse(ones(5,5))
+    @test issparse(sparse(fill(1,5,5)))
+    @test !issparse(fill(1,5,5))
 end
 
 @testset "iszero specialization for SparseMatrixCSC" begin
@@ -53,7 +53,7 @@ end
 end
 
 se33 = speye(3)
-do33 = ones(3)
+do33 = fill(1.,3)
 
 @testset "sparse binary operations" begin
     @test isequal(se33 * se33, se33)
@@ -202,7 +202,7 @@ end
         @test (maximum(abs.((a.'*c + d) - (Array(a).'*c + d))) < 1000*eps())
         c = randn(6) + im*randn(6)
         @test_throws DimensionMismatch α*a.'*c + β*c
-        @test_throws DimensionMismatch α*a.'*ones(5) + β*c
+        @test_throws DimensionMismatch α*a.'*fill(1.,5) + β*c
 
         a = speye(5) + 0.1*sprandn(5, 5, 0.2) + 0.1*im*sprandn(5, 5, 0.2)
         b = randn(5,3)
@@ -334,7 +334,7 @@ dA = Array(sA)
         @test scale!(copy(dAt), bi) ≈ Base.LinAlg.A_rdiv_B!(copy(sAt), Diagonal(b))
         @test scale!(copy(dAt), bi) ≈ Base.LinAlg.A_rdiv_Bt!(copy(sAt), Diagonal(b))
         @test scale!(copy(dAt), conj(bi)) ≈ Base.LinAlg.A_rdiv_Bc!(copy(sAt), Diagonal(b))
-        @test_throws DimensionMismatch Base.LinAlg.A_rdiv_B!(copy(sAt), Diagonal(ones(length(b) + 1)))
+        @test_throws DimensionMismatch Base.LinAlg.A_rdiv_B!(copy(sAt), Diagonal(fill(1., length(b)+1)))
         @test_throws LinAlg.SingularException Base.LinAlg.A_rdiv_B!(copy(sAt), Diagonal(zeros(length(b))))
     end
 end
@@ -528,7 +528,7 @@ end
 end
 
 @testset "issue #5824" begin
-    @test sprand(4,5,0.5).^0 == sparse(ones(4,5))
+    @test sprand(4,5,0.5).^0 == sparse(fill(1,4,5))
 end
 
 @testset "issue #5985" begin
@@ -569,8 +569,8 @@ end
     @test maximum(P, (2,)) == reshape([1.0,2.0,3.0],3,1)
     @test maximum(P, (1,2)) == reshape([3.0],1,1)
 
-    @test minimum(sparse(ones(3,3))) == 1
     @test maximum(sparse(fill(-1,3,3))) == -1
+    @test minimum(sparse(fill(1,3,3))) == 1
 end
 
 @testset "unary functions" begin
@@ -759,10 +759,10 @@ end
     @test nnz(a) == 20
     @test count(!iszero, a) == 11
     a = copy(b)
-    a[1:2,:] = let c = sparse(ones(2,10)); fill!(c.nzval, 0); c; end
+    a[1:2,:] = let c = sparse(fill(1,2,10)); fill!(c.nzval, 0); c; end
     @test nnz(a) == 19
     @test count(!iszero, a) == 8
-    a[1:2,1:3] = let c = sparse(ones(2,3)); c[1,2] = c[2,1] = c[2,2] = 0; c; end
+    a[1:2,1:3] = let c = sparse(fill(1,2,3)); c[1,2] = c[2,1] = c[2,2] = 0; c; end
     @test nnz(a) == 20
     @test count(!iszero, a) == 11
 
@@ -1348,13 +1348,13 @@ end
 end
 
 @testset "sparse" begin
-    local A = sparse(ones(5, 5))
+    local A = sparse(fill(1, 5, 5))
     @test sparse(A) == A
     @test sparse([1:5;], [1:5;], 1) == speye(5)
 end
 
 @testset "speye and one" begin
-    local A = sparse(ones(5, 5))
+    local A = sparse(fill(1, 5, 5))
     @test speye(A) == speye(5)
     @test eye(A) == speye(5)
     @test one(A) == speye(5)
@@ -1804,7 +1804,7 @@ end
 # matrices/vectors yield sparse arrays
 @testset "sparse and dense concatenations" begin
     N = 4
-    densevec = ones(N)
+    densevec = fill(1., N)
     densemat = diagm(0 => densevec)
     spmat = spdiagm(0 => densevec)
     # Test that concatenations of pairs of sparse matrices yield sparse arrays
@@ -1949,7 +1949,7 @@ end
     @test String(take!(io)) ==  string("5×3 SparseMatrixCSC{Float64,Int64} with 5 stored entries:\n  [1, 1]",
                                        "  =  1.0\n  ⋮\n  [5, 3]  =  5.0")
 
-    show(ioc, MIME"text/plain"(), sparse(ones(5,3)))
+    show(ioc, MIME"text/plain"(), sparse(fill(1.,5,3)))
     @test String(take!(io)) ==  string("5×3 SparseMatrixCSC{Float64,$Int} with 15 stored entries:\n  [1, 1]",
                                        "  =  1.0\n  ⋮\n  [5, 3]  =  1.0")
 
@@ -1963,7 +1963,7 @@ end
     @test String(take!(io)) ==  string("6×3 SparseMatrixCSC{Float64,Int64} with 6 stored entries:\n  [1, 1]",
                                        "  =  1.0\n  [2, 1]  =  2.0\n  ⋮\n  [5, 3]  =  5.0\n  [6, 3]  =  6.0")
 
-    show(ioc, MIME"text/plain"(), sparse(ones(6,3)))
+    show(ioc, MIME"text/plain"(), sparse(fill(1.,6,3)))
     @test String(take!(io)) ==  string("6×3 SparseMatrixCSC{Float64,$Int} with 18 stored entries:\n  [1, 1]",
                                        "  =  1.0\n  [2, 1]  =  1.0\n  ⋮\n  [5, 3]  =  1.0\n  [6, 3]  =  1.0")
 

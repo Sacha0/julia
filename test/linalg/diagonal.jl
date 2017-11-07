@@ -328,11 +328,11 @@ end
 
 # Issue 12803
 for t in (Float32, Float64, Int, Complex{Float64}, Rational{Int})
-    @test Diagonal(Matrix{t}[ones(t, 2, 2), ones(t, 3, 3)])[2,1] == zeros(t, 3, 2)
+    @test Diagonal(Matrix{t}[fill(t(1), 2, 2), fill(t(1), 3, 3)])[2,1] == zeros(t, 3, 2)
 end
 
 # Issue 15401
-@test eye(5) \ Diagonal(ones(5)) == eye(5)
+@test eye(5) \ Diagonal(fill(1.,5)) == eye(5)
 
 @testset "Triangular and Diagonal" begin
     for T in (LowerTriangular(randn(5,5)), LinAlg.UnitLowerTriangular(randn(5,5)))

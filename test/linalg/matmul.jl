@@ -222,7 +222,7 @@ end
     @test dot(x, 1:2,y, 1:2) == convert(elty, 12.5)
     @test x.'*y == convert(elty, 29.0)
     @test_throws MethodError dot(rand(elty, 2, 2), randn(elty, 2, 2))
-    X = convert(Vector{Matrix{elty}},[reshape(1:4, 2, 2), ones(2, 2)])
+    X = convert(Vector{Matrix{elty}},[reshape(1:4, 2, 2), fill(1, 2, 2)])
     res = convert(Matrix{elty}, [7.0 13.0; 13.0 27.0])
     @test dot(X, X) == res
 end
@@ -253,8 +253,8 @@ end
     A[2,1] = eye(2,3)
     A[2,2] = eye(2)
     b = Array{Vector{Float64}}(2)
-    b[1] = ones(3)
-    b[2] = ones(2)
+    b[1] = fill(1., 3)
+    b[2] = fill(1., 2)
     @test A*b == Vector{Float64}[[2,2,1], [2,2]]
 end
 

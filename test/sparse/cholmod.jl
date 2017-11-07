@@ -127,7 +127,7 @@ srand(123)
     @test size(chmal, 1) == size(A, 1)
 
     @testset "eltype" begin
-        @test eltype(Dense(ones(3))) == Float64
+        @test eltype(Dense(fill(1., 3))) == Float64
         @test eltype(A) == Float64
         @test eltype(chma) == Float64
     end
@@ -152,7 +152,7 @@ end
     afiro2 = CHOLMOD.aat(afiro, CHOLMOD.SuiteSparse_long[0:50;], CHOLMOD.SuiteSparse_long(1))
     CHOLMOD.change_stype!(afiro2, -1)
     chmaf = cholfact(afiro2)
-    y = afiro'*ones(size(afiro,1))
+    y = afiro'*fill(1., size(afiro,1))
     sol = chmaf\(afiro*y) # least squares solution
     @test CHOLMOD.isvalid(sol)
     pred = afiro'*sol
@@ -332,7 +332,7 @@ end
         A1pd.nzval)
 
     ## High level interface
-    @test isa(CHOLMOD.Sparse(3, 3, [0,1,3,4], [0,2,1,2], ones(4)), CHOLMOD.Sparse) # Sparse doesn't require columns to be sorted
+    @test isa(CHOLMOD.Sparse(3, 3, [0,1,3,4], [0,2,1,2], fill(1., 4)), CHOLMOD.Sparse) # Sparse doesn't require columns to be sorted
     @test_throws BoundsError A1Sparse[6, 1]
     @test_throws BoundsError A1Sparse[1, 6]
     @test sparse(A1Sparse) == A1
@@ -459,9 +459,9 @@ end
         @test CHOLMOD.copy(A1Sparse, 0, 1) == A1Sparse
         @test CHOLMOD.horzcat(A1Sparse, A2Sparse, true) == [A1 A2]
         @test CHOLMOD.vertcat(A1Sparse, A2Sparse, true) == [A1; A2]
-        svec = ones(elty, 1)
+        svec = fill(elty(1), 1)
         @test CHOLMOD.scale!(CHOLMOD.Dense(svec), CHOLMOD.SCALAR, A1Sparse) == A1Sparse
-        svec = ones(elty, 5)
+        svec = fill(elty(1), 5)
         @test_throws DimensionMismatch CHOLMOD.scale!(CHOLMOD.Dense(svec), CHOLMOD.SCALAR, A1Sparse)
         @test CHOLMOD.scale!(CHOLMOD.Dense(svec), CHOLMOD.ROW, A1Sparse) == A1Sparse
         @test_throws DimensionMismatch CHOLMOD.scale!(CHOLMOD.Dense([svec; 1]), CHOLMOD.ROW, A1Sparse)
@@ -629,7 +629,7 @@ gc()
 end
 
 @testset "Issue 14076" begin
-    @test cholfact(sparse([1,2,3,4], [1,2,3,4], Float32[1,4,16,64]))\[1,4,16,64] == ones(4)
+    @test cholfact(sparse([1,2,3,4], [1,2,3,4], Float32[1,4,16,64]))\[1,4,16,64] == fill(1, 4)
 end
 
 @testset "Issue 14134" begin
@@ -646,7 +646,7 @@ end
     serialize(b, F)
     seekstart(b)
     Fnew = deserialize(b)
-    @test_throws ArgumentError Fnew\ones(5)
+    @test_throws ArgumentError Fnew\fill(1., 5)
     @test_throws ArgumentError show(Fnew)
     @test_throws ArgumentError size(Fnew)
     @test_throws ArgumentError diag(Fnew)
@@ -671,7 +671,7 @@ end
 @testset "test \\ for Factor and StridedVecOrMat" begin
     x = rand(5)
     A = cholfact(sparse(Diagonal(x.\1)))
-    @test A\view(ones(10),1:2:10) ≈ x
+    @test A\view(fill(1.,10),1:2:10) ≈ x
     @test A\view(eye(5,5),:,:) ≈ Matrix(Diagonal(x))
 end
 
@@ -701,7 +701,7 @@ end
               Symmetric(Apre + 10I), Hermitian(Apre + 10I),
               Hermitian(complex(Apre)), Hermitian(complex(Apre) + 10I))
         local A, x, b
-        x = ones(10)
+        x = fill(1., 10)
         b = A*x
         @test x ≈ A\b
         @test A.'\b ≈ A'\b
@@ -787,5 +787,5 @@ end
     @test !LinAlg.issuccess(F)
     @test LinAlg.issuccess(ldltfact!(F, A))
     A[3, 3] = 1
-    @test A[:, 3:-1:1]\ones(3) == [1, 1, 1]
+    @test A[:, 3:-1:1]\fill(1., 3) == [1, 1, 1]
 end

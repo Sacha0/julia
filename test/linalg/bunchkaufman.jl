@@ -106,7 +106,7 @@ end
 
 
 @testset "Bunch-Kaufman factors of a singular matrix" begin
-    let As1 = ones(n, n)
+    let As1 = fill(1., n, n)
         As2 = fill(1.0+0im, n, n)
         As3 = fill(1.0+0im, n, n)
         As3[end, 1] += im
@@ -123,7 +123,7 @@ end
                         @test bks == "Failed factorization of type $(typeof(F))"
                         @test det(F) == 0
                         @test_throws LinAlg.SingularException inv(F)
-                        @test_throws LinAlg.SingularException F \ ones(size(As, 1))
+                        @test_throws LinAlg.SingularException F \ fill(1., n)
                     end
                 end
             end

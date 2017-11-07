@@ -438,9 +438,9 @@ end
         let N = 4
             spvec = spzeros(N)
             spmat = spzeros(N, 1)
-            densevec = ones(N)
-            densemat = ones(N, 1)
-            diagmat = Diagonal(ones(4))
+            densevec = fill(1., N)
+            densemat = fill(1., N, 1)
+            diagmat = Diagonal(densevec)
             # Test that concatenations of pairwise combinations of sparse vectors with dense
             # vectors/matrices, sparse matrices, or special matrices yield sparse arrays
             for othervecormat in (densevec, densemat, spmat)

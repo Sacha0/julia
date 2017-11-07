@@ -151,9 +151,9 @@ end
 
 @testset "diag" begin
     A = eye(4)
-    @test diag(A) == ones(4)
-    @test diag(view(A, 1:3, 1:3)) == ones(3)
-    @test diag(view(A, 1:2, 1:2)) == ones(2)
+    @test diag(A) == fill(1, 4)
+    @test diag(view(A, 1:3, 1:3)) == fill(1, 3)
+    @test diag(view(A, 1:2, 1:2)) == fill(1, 2)
     @test_throws ArgumentError diag(rand(10))
 end
 
@@ -169,16 +169,17 @@ end
     @test_throws DimensionMismatch Base.LinAlg.axpy!(α,x,collect(1:3),y,collect(1:5))
 end
 
-@test !issymmetric(ones(5,3))
-@test !ishermitian(ones(5,3))
-@test cross(ones(3),ones(3)) == zeros(3)
+@test !issymmetric(fill(1,5,3))
+@test !ishermitian(fill(1,5,3))
+@test (x = fill(1,3); cross(x,x) == zeros(3))
 
-@test trace(Bidiagonal(ones(5),zeros(4),:U)) == 5
+@test trace(Bidiagonal(fill(1,5),zeros(4),:U)) == 5
 
 
 @testset "array and subarray" begin
     aa = reshape([1.:6;], (2,3))
     for a in (aa, view(aa, 1:2, 1:2))
+        am, an = size(a)
         @testset "2-argument version of scale!" begin
             @test scale!(copy(a), 5.) == a*5
             @test scale!(5., copy(a)) == a*5

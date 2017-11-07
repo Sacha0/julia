@@ -379,7 +379,7 @@ for elty1 in (Float32, Float64, BigFloat, Complex64, Complex128, Complex{BigFloa
             @test_throws DimensionMismatch Ann'\bm
             @test_throws DimensionMismatch Ann.'\bm
             if t1 == UpperTriangular || t1 == LowerTriangular
-                @test_throws Base.LinAlg.SingularException naivesub!(t1(zeros(elty1,n,n)),ones(eltyB,n))
+                @test_throws Base.LinAlg.SingularException naivesub!(t1(zeros(elty1,n,n)),fill(eltyB(1),n))
             end
             @test B/A1 ≈ B/Matrix(A1)
             @test B/A1.' ≈ B/Matrix(A1).'
@@ -437,7 +437,7 @@ for eltya in (Float32, Float64, Complex64, Complex128, BigFloat, Int)
         γ = n*ε/(1 - n*ε)
         if eltya != BigFloat
             bigA = big.(Atri)
-            x̂ = ones(n, 2)
+            x̂ = fill(1., n, 2)
             for i = 1:size(b, 2)
                 @test norm(x̂[:,i] - x[:,i], Inf)/norm(x̂[:,i], Inf) <= condskeel(bigA, x̂[:,i])*γ/(1 - condskeel(bigA)*γ)
             end
@@ -466,7 +466,7 @@ for eltya in (Float32, Float64, Complex64, Complex128, BigFloat, Int)
         γ = n*ε/(1 - n*ε)
         if eltya != BigFloat
             bigA = big.(Atri)
-            x̂ = ones(n, 2)
+            x̂ = fill(1., n, 2)
             for i = 1:size(b, 2)
                 @test norm(x̂[:,i] - x[:,i], Inf)/norm(x̂[:,i], Inf) <= condskeel(bigA, x̂[:,i])*γ/(1 - condskeel(bigA)*γ)
             end
@@ -512,7 +512,7 @@ end
 @test_throws ArgumentError UpperTriangular(LowerTriangular(randn(3,3)))
 
 # Issue 16196
-@test UpperTriangular(eye(3)) \ view(ones(3), [1,2,3]) == ones(3)
+@test UpperTriangular(eye(3)) \ view(fill(1., 3), [1,2,3]) == fill(1., 3)
 
 # dimensional correctness:
 isdefined(Main, :TestHelpers) || @eval Main include("../TestHelpers.jl")

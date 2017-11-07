@@ -35,13 +35,13 @@ srand(100)
         end
     end
 
-    o4 = ones(elty, 4)
+    o4 = fill(elty(1), 4)
     z4 = zeros(elty, 4)
 
     I4 = eye(elty, 4)
     I43 = eye(elty, 4, 3)
-    L4 = tril(ones(elty, (4,4)))
-    U4 = triu(ones(elty, (4,4)))
+    L4 = tril(fill(elty(1), 4,4))
+    U4 = triu(fill(elty(1), 4,4))
     Z4 = zeros(elty, (4,4))
 
     elm1 = convert(elty, -1)

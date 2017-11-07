@@ -472,7 +472,7 @@ end
 
 @testset "ptsv" begin
     @testset for elty in (Float32, Float64, Complex64, Complex128)
-        dv = ones(elty,10)
+        dv = fill(elty(1),10)
         ev = zeros(elty,9)
         rdv = real(dv)
         A = SymTridiagonal(dv,ev)
@@ -489,7 +489,7 @@ end
 
 @testset "pttrf and pttrs" begin
     @testset for elty in (Float32, Float64, Complex64, Complex128)
-        dv = ones(elty,10)
+        dv = fill(elty(1),10)
         ev = zeros(elty,9)
         rdv = real(dv)
         A = SymTridiagonal(dv,ev)

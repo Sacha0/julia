@@ -62,7 +62,7 @@ bimg  = randn(n,2)/2
                 @test_throws DimensionMismatch b'\b
                 @test_throws DimensionMismatch b\b'
                 @test norm(a*x - b, 1)/norm(b) < ε*κ*n*2 # Ad hoc, revisit!
-                @test zeros(eltya,n)\ones(eltya,n) ≈ (zeros(eltya,n,1)\ones(eltya,n,1))[1,1]
+                @test zeros(eltya,n)\fill(eltya(1),n) ≈ (zeros(eltya,n,1)\fill(eltya(1),n,1))[1,1]
             end
 
             @testset "Test nullspace" begin
@@ -154,7 +154,7 @@ end
     mmat = 10
     nmat = 8
     @testset "For $elty" for elty in (Float32, Float64, BigFloat, Complex{Float32}, Complex{Float64}, Complex{BigFloat}, Int32, Int64, BigInt)
-        x = ones(elty,10)
+        x = fill(elty(1),10)
         @testset "Vector" begin
             xs = view(x,1:2:10)
             @test norm(x, -Inf) ≈ 1
@@ -234,7 +234,7 @@ end
         end
 
         @testset "Matrix (Operator)" begin
-            A = ones(elty,10,10)
+            A = fill(elty(1),10,10)
             As = view(A,1:5,1:5)
             @test norm(A, 1) ≈ 10
             elty <: Union{BigFloat,Complex{BigFloat},BigInt} || @test norm(A, 2) ≈ 10
@@ -744,7 +744,7 @@ end
 end
 
 @testset "Least squares solutions" begin
-    a = [ones(20) 1:20 1:20]
+    a = [fill(1, 20) 1:20 1:20]
     b = reshape(eye(8, 5), 20, 2)
     @testset "Tests for type $elty" for elty in (Float32, Float64, Complex64, Complex128)
         a = convert(Matrix{elty}, a)
