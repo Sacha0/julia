@@ -203,7 +203,7 @@ end
 
 @testset "issue #23218" begin
     a = zeros(1)
-    b = ones(1)
+    b = [1.0]
     idx = (1,)
     @fastmath a[idx...] += b[idx...]
     @test a == b

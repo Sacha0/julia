@@ -77,8 +77,7 @@ using Main.TestHelpers.OAs
     @test_throws ArgumentError reinterpret(Any, b)
     c = ["hello", "world"]
     @test_throws ArgumentError reinterpret(Float32, c)
-    a = Vector(ones(5))
-    @test_throws ArgumentError resize!(a, -2)
+    @test_throws ArgumentError resize!(Float64[], -2)
 
     b = rand(32)
     a = reshape(b, (2, 2, 2, 2, 2))
@@ -1845,8 +1844,8 @@ end
 fill!(B, 2)
 @test all(x->x==2, B)
 
-iall = (1:size(A,1)).*ones(Int,size(A,2))'
-jall = ones(Int,size(A,1)).*(1:size(A,2))'
+iall = repmat(1:size(A,1), 1, size(A,2))
+jall = repmat((1:size(A,2))', size(A,1), 1)
 i,j = findn(B)
 @test vec(i) == vec(iall)
 @test vec(j) == vec(jall)
@@ -2044,7 +2043,7 @@ end # module AutoRetType
 @testset "concatenations of dense matrices/vectors yield dense matrices/vectors" begin
     N = 4
     densevec = fill(1., N)
-    densemat = diagm(0 => ones(N))
+    densemat = Matrix(1.0I, N, N)
     # Test that concatenations of homogeneous pairs of either dense matrices or dense vectors
     # (i.e., Matrix-Matrix concatenations, and Vector-Vector concatenations) yield dense arrays
     for densearray in (densevec, densemat)

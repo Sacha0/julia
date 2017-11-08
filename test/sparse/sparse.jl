@@ -20,7 +20,7 @@ end
 end
 
 @testset "indtype" begin
-    @test Base.SparseArrays.indtype(sparse(ones(Int8,2),ones(Int8,2),rand(2))) == Int8
+    @test Base.SparseArrays.indtype(sparse(Int8[1,1],Int8[1,1],[1,1])) == Int8
 end
 
 @testset "sparse matrix construction" begin
@@ -78,14 +78,14 @@ end
     sp33 = speye(3, 3)
 
     @testset "horizontal concatenation" begin
-        @test all([se33 se33] == sparse([1, 2, 3, 1, 2, 3], [1, 2, 3, 4, 5, 6], ones(6)))
+        @test [se33 se33] == [Array(se33) Array(se33)]
         @test length(([sp33 0I]).nzval) == 3
     end
 
     @testset "vertical concatenation" begin
-        @test all([se33; se33] == sparse([1, 4, 2, 5, 3, 6], [1, 1, 2, 2, 3, 3], ones(6)))
+        @test [se33; se33] == [Array(se33); Array(se33)]
         se33_32bit = convert(SparseMatrixCSC{Float32,Int32}, se33)
-        @test all([se33; se33_32bit] == sparse([1, 4, 2, 5, 3, 6], [1, 1, 2, 2, 3, 3], ones(6)))
+        @test [se33; se33_32bit] == [Array(se33); Array(se33_32bi)]
         @test length(([sp33; 0I]).nzval) == 3
     end
 
@@ -100,7 +100,7 @@ end
     end
 
     @testset "blkdiag concatenation" begin
-        @test all(blkdiag(se33, se33) == sparse([1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], ones(6)))
+        @test blkdiag(se33, se33) == blkdiag(Array(se33), Array(se33))
     end
 
     @testset "concatenation promotion" begin
@@ -1424,7 +1424,7 @@ end
 end
 
 @testset "trace" begin
-    @test_throws DimensionMismatch trace(sparse(ones(5,6)))
+    @test_throws DimensionMismatch trace(spzeros(5,6))
     @test trace(speye(5)) == 5
 end
 
@@ -1977,8 +1977,8 @@ end
     local A
     colptr = [1,2,3,4]
     rowval = [1,2,3]
-    nzval1  = ones(0)
-    nzval2  = ones(3)
+    nzval1  = Int[]
+    nzval2  = [1,1,1]
     A = SparseMatrixCSC(n, n, colptr, rowval, nzval1)
     @test nnz(A) == n
     @test_throws BoundsError A[n,n]

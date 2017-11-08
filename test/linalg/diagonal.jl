@@ -251,7 +251,7 @@ srand(1)
         @test issymmetric(D2)
         @test ishermitian(D2)
         if elty <: Complex
-            dc = d + im*convert(Vector{elty}, ones(n))
+            dc = d .+ elty(1im)
             D3 = Diagonal(dc)
             @test issymmetric(D3)
             @test !ishermitian(D3)

@@ -126,10 +126,10 @@ end
 @testset "concatenations of combinations of special and other matrix types" begin
     N = 4
     # Test concatenating pairwise combinations of special matrices
-    diagmat = Diagonal(ones(N))
-    bidiagmat = Bidiagonal(ones(N), ones(N-1), :U)
-    tridiagmat = Tridiagonal(ones(N-1), ones(N), ones(N-1))
-    symtridiagmat = SymTridiagonal(ones(N), ones(N-1))
+    diagmat = Diagonal(1:N)
+    bidiagmat = Bidiagonal(1:N, 1:(N-1), :U)
+    tridiagmat = Tridiagonal(1:(N-1), 1:N, 1:(N-1))
+    symtridiagmat = SymTridiagonal(1:N, 1:(N-1))
     specialmats = (diagmat, bidiagmat, tridiagmat, symtridiagmat)
     for specialmata in specialmats, specialmatb in specialmats
         @test issparse(hcat(specialmata, specialmatb))
@@ -179,10 +179,10 @@ end
     # Concatenations involving these types, un/annotated, should yield sparse arrays
     spvec = spzeros(N)
     spmat = speye(N)
-    diagmat = Diagonal(ones(N))
-    bidiagmat = Bidiagonal(ones(N), ones(N-1), :U)
-    tridiagmat = Tridiagonal(ones(N-1), ones(N), ones(N-1))
-    symtridiagmat = SymTridiagonal(ones(N), ones(N-1))
+    diagmat = Diagonal(1:N)
+    bidiagmat = Bidiagonal(1:N, 1:(N-1), :U)
+    tridiagmat = Tridiagonal(1:(N-1), 1:N, 1:(N-1))
+    symtridiagmat = SymTridiagonal(1:N, 1:(N-1))
     sparseconcatmats = testfull ? (spmat, diagmat, bidiagmat, tridiagmat, symtridiagmat) : (spmat, diagmat)
     # Concatenations involving strictly these types, un/annotated, should yield dense arrays
     densevec = fill(1., N)

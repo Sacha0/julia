@@ -296,13 +296,14 @@ end
 
 @testset "test abstractarray trig functions" begin
     TAA = rand(2,2)
-    TAA = (TAA + TAA.')/2.
+    TAA = (TAA .+ TAA.')./2.
     STAA = Symmetric(TAA)
     @test Array(atanh.(STAA)) == atanh.(TAA)
     @test Array(asinh.(STAA)) == asinh.(TAA)
-    @test Array(acosh.(STAA+Symmetric(ones(TAA)))) == acosh.(TAA+ones(TAA))
-    @test Array(acsch.(STAA+Symmetric(ones(TAA)))) == acsch.(TAA+ones(TAA))
-    @test Array(acoth.(STAA+Symmetric(ones(TAA)))) == acoth.(TAA+ones(TAA))
+    TAA .+= 1
+    @test Array(acosh.(STAA)) == acosh.(TAA)
+    @test Array(acsch.(STAA)) == acsch.(TAA)
+    @test Array(acoth.(STAA)) == acoth.(TAA)
 end
 
 @testset "check exp2(::Integer) matches exp2(::Float)" begin
