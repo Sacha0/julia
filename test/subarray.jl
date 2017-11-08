@@ -438,7 +438,7 @@ end
 
 # issue #6218 - logical indexing
 A = rand(2, 2, 3)
-msk = ones(Bool, 2, 2)
+msk = fill(true, 2, 2)
 msk[2,1] = false
 sA = view(A, :, :, 1)
 sA[msk] = 1.0
@@ -459,7 +459,7 @@ A = reshape(1:120, 3, 5, 8)
 sA = view(A, :, :, :)
 @test sA[[72 17; 107 117]] == [72 17; 107 117]
 @test sA[[99 38 119 14 76 81]] == [99 38 119 14 76 81]
-@test sA[[ones(Int, 2, 2, 2); 2ones(Int, 2, 2, 2)]] == [ones(Int, 2, 2, 2); 2ones(Int, 2, 2, 2)]
+@test sA[[fill(1, (2, 2, 2)); fill(2, (2, 2, 2))]] == [fill(1, (2, 2, 2)); fill(2, (2, 2, 2))]
 sA = view(A, 1:2, 2:3, 3:4)
 @test sA[(1:8)'] == [34 35 37 38 49 50 52 53]
 @test sA[[1 2 4 4; 6 1 1 4]] == [34 35 38 38; 50 34 34 38]

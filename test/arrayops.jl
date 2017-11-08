@@ -57,7 +57,7 @@ using Main.TestHelpers.OAs
     a[[1 2], 1] = 0
     @test a[1,1] == 0. && a[1,2] == 1. && a[2,1] == 0. && a[2,2] == 1.
     a[:, [1 2]] = 2
-    @test a == 2ones(2,2)
+    @test a == fill(2.,2,2)
 
     a = Array{Float64}(2, 2, 2, 2, 2)
     a[1,1,1,1,1] = 10
@@ -375,8 +375,8 @@ end
     @test_throws BoundsError insert!(v, 5, 5)
 end
 @testset "concatenation" begin
-    @test isequal([ones(2,2)  2*ones(2,1)], [1. 1 2; 1 1 2])
-    @test isequal([ones(2,2); 2*ones(1,2)], [1. 1; 1 1; 2 2])
+    @test isequal([fill(1.,2,2)  fill(2.,2,1)], [1. 1 2; 1 1 2])
+    @test isequal([fill(1.,2,2); fill(2.,1,2)], [1. 1; 1 1; 2 2])
 end
 
 @testset "typed array literals" begin
@@ -1192,7 +1192,7 @@ end
     X = [ i+2j for i=1:5, j=1:5 ]
     @test X[2,3] == 8
     @test X[4,5] == 14
-    @test isequal(ones(2,3) * ones(2,3)', [3. 3.; 3. 3.])
+    @test isequal(fill(3.,2,2), [3. 3.; 3. 3.])
     # @test isequal([ [1,2] for i=1:2, : ], [1 2; 1 2])
     # where element type is a Union. try to confuse type inference.
     foo32_64(x) = (x<2) ? Int32(x) : Int64(x)

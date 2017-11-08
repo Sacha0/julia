@@ -34,7 +34,7 @@ end
     @test UniformScaling(4.32) ≈ 4.3*eye(2) rtol=0.1 atol=0.01 norm=norm
     @test 4.3*eye(2) ≈ UniformScaling(4.32) rtol=0.1 atol=0.01
     @test [4.3201 0.002;0.001 4.32009] ≈ UniformScaling(4.32) rtol=0.1 atol=0.
-    @test UniformScaling(4.32) ≉ 4.3*ones(2,2) rtol=0.1 atol=0.01
+    @test UniformScaling(4.32) ≉ fill(4.3,2,2) rtol=0.1 atol=0.01
     @test UniformScaling(4.32) ≈ 4.32*eye(2)
 end
 
@@ -103,7 +103,7 @@ let
                 @test @inferred(J*S) == S*λ
                 @test @inferred(A*J) == A*λ
                 @test @inferred(J*A) == A*λ
-                @test @inferred(J*ones(3)) == ones(3)*λ
+                @test @inferred(J*fill(1, 3)) == fill(λ, 3)
                 @test @inferred(λ*J) === UniformScaling(λ*J.λ)
                 @test @inferred(J*λ) === UniformScaling(λ*J.λ)
                 @test @inferred(J/I) === J

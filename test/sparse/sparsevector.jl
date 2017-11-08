@@ -1110,11 +1110,9 @@ end
             for (siz, Sp) in zip(sizes, sptypes)
                 arr = rand(Tv, siz...)
                 sparr = Sp(arr)
-                fillval = rand(Tv)
-                fill!(sparr, fillval)
-                @test Array(sparr) == fillval * ones(arr)
-                fill!(sparr, 0)
-                @test Array(sparr) == zeros(arr)
+                x = rand(Tv)
+                @test fill!(sparr, x) == fill(x, siz)
+                @test fill!(sparr, 0) == fill(0, siz)
             end
         end
     end

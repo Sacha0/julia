@@ -107,8 +107,8 @@ end
 
 @testset "Bunch-Kaufman factors of a singular matrix" begin
     let As1 = ones(n, n)
-        As2 = complex(ones(n, n))
-        As3 = complex(ones(n, n))
+        As2 = fill(1.0+0im, n, n)
+        As3 = fill(1.0+0im, n, n)
         As3[end, 1] += im
         As3[1, end] -= im
 

@@ -24,7 +24,7 @@ end
 end
 
 @testset "sparse matrix construction" begin
-    @test isequal(Array(sparse(complex.(ones(5,5), ones(5,5)))), complex.(ones(5,5), ones(5,5)))
+    @test (A = fill(1.0+im,5,5); isequal(Array(sparse(A)), A))
     @test_throws ArgumentError sparse([1,2,3], [1,2], [1,2,3], 3, 3)
     @test_throws ArgumentError sparse([1,2,3], [1,2,3], [1,2], 3, 3)
     @test_throws ArgumentError sparse([1,2,3], [1,2,3], [1,2,3], 0, 1)
@@ -533,7 +533,7 @@ end
 
 @testset "issue #5985" begin
     @test sprand(Bool, 4, 5, 0.0) == sparse(zeros(Bool, 4, 5))
-    @test sprand(Bool, 4, 5, 1.00) == sparse(ones(Bool, 4, 5))
+    @test sprand(Bool, 4, 5, 1.00) == sparse(fill(true, 4, 5))
     sprb45nnzs = zeros(5)
     for i=1:5
         sprb45 = sprand(Bool, 4, 5, 0.5)
@@ -569,8 +569,8 @@ end
     @test maximum(P, (2,)) == reshape([1.0,2.0,3.0],3,1)
     @test maximum(P, (1,2)) == reshape([3.0],1,1)
 
-    @test maximum(sparse(-ones(3,3))) == -1
     @test minimum(sparse(ones(3,3))) == 1
+    @test maximum(sparse(fill(-1,3,3))) == -1
 end
 
 @testset "unary functions" begin
@@ -721,7 +721,7 @@ end
     @test a[1,:] == sparse(ones(Int,10))
     a[:,2] = 2
     @test count(!iszero, a) == 19
-    @test a[:,2] == 2*sparse(ones(Int,10))
+    @test a[:,2] == sparse(fill(2,10))
     b = copy(a)
 
     # Zero-assignment behavior of setindex!(A, v, i, j)
@@ -809,15 +809,15 @@ end
     A[1:5,1:10] = 10
     A[1:5,1:10] = 10
     @test count(!iszero, A) == 50
-    @test A[1:5,1:10] == 10 * ones(Int, 5, 10)
+    @test A[1:5,1:10] == fill(10, 5, 10)
     A[6:10,11:20] = 0
     @test count(!iszero, A) == 50
     A[6:10,11:20] = 20
     @test count(!iszero, A) == 100
-    @test A[6:10,11:20] == 20 * ones(Int, 5, 10)
+    @test A[6:10,11:20] == fill(20, 5, 10)
     A[4:8,8:16] = 15
     @test count(!iszero, A) == 121
-    @test A[4:8,8:16] == 15 * ones(Int, 5, 9)
+    @test A[4:8,8:16] == fill(15, 5, 9)
 
     ASZ = 1000
     TSZ = 800
@@ -1267,7 +1267,7 @@ end
 end
 
 @testset "test that sparse / sparsevec constructors work for AbstractMatrix subtypes" begin
-    D = Diagonal(ones(10,10))
+    D = Diagonal(fill(1,10))
     sm = sparse(D)
     sv = sparsevec(D)
 

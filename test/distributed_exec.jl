@@ -1254,7 +1254,7 @@ end
 
 # Multiple references in a closure should be serialized only once.
 global mrefs = TestSerCnt(ones(10))
-@test remotecall_fetch(()->(mrefs.v, 2*mrefs.v, 3*mrefs.v), id_other) == (ones(10), 2*ones(10), 3*ones(10))
+@test remotecall_fetch(()->(mrefs.v, 2*mrefs.v, 3*mrefs.v), id_other) == (fill(1.,10), fill(2.,10), fill(3.,10))
 @test testsercnt_d[object_id(mrefs)] == 1
 
 
@@ -1515,7 +1515,7 @@ npids = addprocs_with_testenv(WorkerArgTester(`--worker=foobar`, false))
 rmprocs(workers())
 p1,p2 = addprocs_with_testenv(2)
 @everywhere f22865(p) = remotecall_fetch(x->x.*2, p, ones(2))
-@test ones(2).*2 == remotecall_fetch(f22865, p1, p2)
+@test fill(2.,2) == remotecall_fetch(f22865, p1, p2)
 
 function reuseport_tests()
     # Run the test on all processes.
