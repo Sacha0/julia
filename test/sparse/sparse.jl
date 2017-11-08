@@ -1363,13 +1363,11 @@ end
 end
 
 @testset "istriu/istril" begin
-    local A
-    A = sparse(triu(rand(5, 5)))
-    @test istriu(A)
-    @test !istriu(sparse(ones(5, 5)))
-    A = sparse(tril(rand(5, 5)))
-    @test istril(A)
-    @test !istril(sparse(ones(5, 5)))
+    local A = fill(1, 5, 5)
+    @test istriu(sparse(triu(A)))
+    @test !istriu(sparse(A))
+    @test istril(sparse(tril(A)))
+    @test !istril(sparse(A))
 end
 
 @testset "droptol" begin
@@ -1429,8 +1427,9 @@ end
 end
 
 @testset "spdiagm" begin
-    @test spdiagm(0 => ones(2), -1 => ones(2)) == [1.0 0.0 0.0; 1.0 1.0 0.0; 0.0 1.0 0.0]
-    @test spdiagm(0 => ones(2),  1 => ones(2)) == [1.0 1.0 0.0; 0.0 1.0 1.0; 0.0 0.0 0.0]
+    x = fill(1, 2)
+    @test spdiagm(0 => x, -1 => x) == [1 0 0; 1 1 0; 0 1 0]
+    @test spdiagm(0 => x,  1 => x) == [1 1 0; 0 1 1; 0 0 0]
 
     for (x, y) in ((rand(5), rand(4)),(sparse(rand(5)), sparse(rand(4))))
         @test spdiagm(-1 => x)::SparseMatrixCSC         == diagm(-1 => x)
@@ -1742,7 +1741,8 @@ end
         @test isa(factorize(triu(A)), UpperTriangular{Float64, SparseMatrixCSC{Float64, Int}})
         @test factorize(tril(A)) == tril(A)
         @test isa(factorize(tril(A)), LowerTriangular{Float64, SparseMatrixCSC{Float64, Int}})
-        @test !Base.USE_GPL_LIBS || factorize(A[:, 1:4])\ones(size(A, 1)) ≈ Array(A[:, 1:4])\ones(size(A, 1))
+        C, b = A[:, 1:4], fill(1., size(A, 1))
+        @test !Base.USE_GPL_LIBS || factorize(C)\b ≈ Array(C)\b
         @test_throws ErrorException chol(A)
         @test_throws ErrorException lu(A)
         @test_throws ErrorException eig(A)
@@ -1753,15 +1753,13 @@ end
 @testset "issue #13792, use sparse triangular solvers for sparse triangular solves" begin
     local A, n, x
     n = 100
-    A = sprandn(n, n, 0.5) + sqrt(n)*I
-    x = LowerTriangular(A)*ones(n)
-    @test LowerTriangular(A)\x ≈ ones(n)
-    x = UpperTriangular(A)*ones(n)
-    @test UpperTriangular(A)\x ≈ ones(n)
+    A, b = sprandn(n, n, 0.5) + sqrt(n)*I, fill(1., n)
+    @test LowerTriangular(A)\(LowerTriangular(A)*b) ≈ b
+    @test UpperTriangular(A)\(UpperTriangular(A)*b) ≈ b
     A[2,2] = 0
     dropzeros!(A)
-    @test_throws LinAlg.SingularException LowerTriangular(A)\ones(n)
-    @test_throws LinAlg.SingularException UpperTriangular(A)\ones(n)
+    @test_throws LinAlg.SingularException LowerTriangular(A)\b
+    @test_throws LinAlg.SingularException UpperTriangular(A)\b
 end
 
 @testset "issue described in https://groups.google.com/forum/#!topic/julia-dev/QT7qpIpgOaA" begin

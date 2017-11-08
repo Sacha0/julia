@@ -98,8 +98,8 @@
     end
 
     @testset "Issue #4523 - complex sparse \\" begin
-        x = speye(2) + im * speye(2)
-        @test (x*(lufact(x) \ ones(2))) ≈ ones(2)
+        A, b = sparse((1.0 + im)I, 2, 2), fill(1., 2)
+        @test A * (lufact(A)\b) ≈ b
 
         @test det(sparse([1,3,3,1], [1,1,3,3], [1,1,1,1])) == 0
     end

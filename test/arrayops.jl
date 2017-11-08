@@ -1699,10 +1699,10 @@ end
 end
 
 @testset "simple transposes" begin
-    a = ones(Complex,1,5)
-    b = zeros(Complex,5)
-    c = ones(Complex,2,5)
-    d = ones(Complex,6)
+    a = fill(1.0+0im,1,5)
+    c = fill(1.0+0im,2,5)
+    d = fill(1.0+0im,6)
+    b = fill(0.0im,5)
     @test_throws DimensionMismatch transpose!(a,d)
     @test_throws DimensionMismatch transpose!(d,a)
     @test_throws DimensionMismatch adjoint!(a,d)
@@ -1711,18 +1711,18 @@ end
     @test_throws DimensionMismatch adjoint!(b,c)
     @test_throws DimensionMismatch transpose!(c,b)
     @test_throws DimensionMismatch adjoint!(c,b)
+    ao, bo = copy(a), copy(b)
     transpose!(b,a)
-    @test b == ones(Complex,5)
-    b = ones(Complex,5)
-    a = zeros(Complex,1,5)
+    @test b == ao
+    b = copy(bo)
     transpose!(a,b)
-    @test a == ones(Complex,1,5)
-    b = zeros(Complex,5)
+    @test a == bo
+    a = copy(ao)
     adjoint!(b,a)
-    @test b == ones(Complex,5)
-    a = zeros(Complex,1,5)
+    @test b == ao
+    b = copy(bo)
     adjoint!(a,b)
-    @test a == ones(Complex,1,5)
+    @test a == bo
 end
 
 @testset "bounds checking for copy!" begin

@@ -312,7 +312,7 @@ for elty1 in (Float32, Float64, BigFloat, Complex64, Complex128, Complex{BigFloa
         end
 
         for eltyB in (Float32, Float64, BigFloat, Complex64, Complex128, Complex{BigFloat})
-            B = convert(Matrix{eltyB}, elty1 <: Complex ? real(A1)*ones(n, n) : A1*ones(n, n))
+            B = convert(Matrix{eltyB}, (elty1 <: Complex ? real(A1) : A1)*fill(1., n, n))
 
             debug && println("elty1: $elty1, A1: $t1, B: $eltyB")
 
@@ -422,7 +422,7 @@ for eltya in (Float32, Float64, Complex64, Complex128, BigFloat, Int)
 
         debug && println("Solve upper triangular system")
         Atri = UpperTriangular(lufact(A)[:U]) |> t -> eltya <: Complex && eltyb <: Real ? real(t) : t # Here the triangular matrix can't be too badly conditioned
-        b = convert(Matrix{eltyb}, eltya <: Complex ? Matrix(Atri)*ones(n, 2) : Matrix(Atri)*ones(n, 2))
+        b = convert(Matrix{eltyb}, Matrix(Atri)*fill(1., n, 2))
         x = Matrix(Atri) \ b
 
         debug && println("Test error estimates")
@@ -450,7 +450,7 @@ for eltya in (Float32, Float64, Complex64, Complex128, BigFloat, Int)
 
         debug && println("Solve lower triangular system")
         Atri = UpperTriangular(lufact(A)[:U]) |> t -> eltya <: Complex && eltyb <: Real ? real(t) : t # Here the triangular matrix can't be too badly conditioned
-        b = convert(Matrix{eltyb}, eltya <: Complex ? Matrix(Atri)*ones(n, 2) : Matrix(Atri)*ones(n, 2))
+        b = convert(Matrix{eltyb}, Matrix(Atri)*fill(1., n, 2))
         x = Matrix(Atri)\b
 
         debug && println("Test error estimates")
@@ -461,7 +461,7 @@ for eltya in (Float32, Float64, Complex64, Complex128, BigFloat, Int)
         end
 
         debug && println("Test forward error [JIN 5705] if this is not a BigFloat")
-        b = eltyb == Int ? trunc.(Int,Atri*ones(n, 2)) : convert(Matrix{eltyb}, Atri*ones(eltya, n, 2))
+        b = (b0 = Atri*fill(1, n, 2); convert(Matrix{eltyb}, eltyb == Int ? trunc.(b0) : b0))
         x = Atri \ b
         γ = n*ε/(1 - n*ε)
         if eltya != BigFloat

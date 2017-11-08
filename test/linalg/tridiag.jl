@@ -191,8 +191,8 @@ guardsrand(123) do
             fds = [abs.(d) for d in ds]
             @test abs.(A)::mat_type == mat_type(fds...)
             @testset "Multiplication with strided matrix/vector" begin
-                @test A*ones(n) ≈ Array(A)*ones(n)
-                @test A*ones(n, 2) ≈ Array(A)*ones(n, 2)
+                @test (x = fill(1.,n); A*x ≈ Array(A)*x)
+                @test (X = fill(1.,n,2); A*X ≈ Array(A)*X)
             end
             @testset "Binary operations" begin
                 B = mat_type == Tridiagonal ? mat_type(a, b, c) : mat_type(b, a)
