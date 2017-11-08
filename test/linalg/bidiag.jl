@@ -298,7 +298,7 @@ end
 @test Bidiagonal(1:3, 1:2, :U) == [1 1 0; 0 2 2; 0 0 3]
 
 @testset "promote_rule" begin
-    A = Bidiagonal(ones(Float32,10),ones(Float32,9),:U)
+    A = Bidiagonal(fill(1f0,10),fill(1f0,9),:U)
     B = rand(Float64,10,10)
     C = Tridiagonal(rand(Float64,9),rand(Float64,10),rand(Float64,9))
     @test promote_rule(Matrix{Float64}, Bidiagonal{Float64}) == Matrix{Float64}

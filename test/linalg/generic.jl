@@ -280,7 +280,7 @@ end
 @testset "LinAlg.axpy! for x and y of different dimensions" begin
     α = 5
     x = 2:5
-    y = ones(Int, 2, 4)
+    y = fill(1, 2, 4)
     rx = [1 4]
     ry = [2 8]
     @test LinAlg.axpy!(α, x, rx, y, ry) == [1 1 1 1; 11 1 1 26]

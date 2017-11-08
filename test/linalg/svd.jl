@@ -86,7 +86,7 @@ a2img  = randn(n,n)/2
             @test d1 ≈ gsvd[:D1]
             @test d2 ≈ gsvd[:D2]
             @test q ≈ gsvd[:Q]
-            @test gsvd[:a].^2 + gsvd[:b].^2 ≈ ones(eltya,length(gsvd[:a]))
+            @test gsvd[:a].^2 + gsvd[:b].^2 ≈ fill(1, length(gsvd[:a]))
 
             #testing the other layout for D1 & D2
             b = rand(eltya,n,2*n)

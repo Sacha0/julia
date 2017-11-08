@@ -67,7 +67,7 @@
             @test A.'*x ≈ b
 
             # Element promotion and type inference
-            @inferred lua\ones(Int, size(A, 2))
+            @inferred lua\fill(1, size(A, 2))
         end
     end
 

@@ -83,8 +83,8 @@ end
         @test A*B == [-7 9; -4 9]
         @test At_mul_Bt(A, B) == [-6 -11 15; -6 -13 18; -6 -15 21]
     end
-    AA = ones(Int, 2, 100)
-    BB = ones(Int, 100, 3)
+    AA = fill(1, 2, 100)
+    BB = fill(1, 100, 3)
     for A in (copy(AA), view(AA, 1:2, 1:100)), B in (copy(BB), view(BB, 1:100, 1:3))
         @test A*B == [100 100 100; 100 100 100]
     end
@@ -102,8 +102,8 @@ end
         @test Base.LinAlg.Ac_mul_Bt!(C, A, B) == A'*B.'
 
         #test DimensionMismatch for generic_matmatmul
-        @test_throws DimensionMismatch Base.LinAlg.Ac_mul_Bt!(C,A,ones(Int,4,4))
-        @test_throws DimensionMismatch Base.LinAlg.Ac_mul_Bt!(C,ones(Int,4,4),B)
+        @test_throws DimensionMismatch Base.LinAlg.Ac_mul_Bt!(C,A,fill(1,4,4))
+        @test_throws DimensionMismatch Base.LinAlg.Ac_mul_Bt!(C,fill(1,4,4),B)
     end
     vv = [1,2]
     CC = Array{Int}(2, 2)

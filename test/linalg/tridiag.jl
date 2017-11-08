@@ -329,8 +329,9 @@ end
 end
 
 @testset "convert for SymTridiagonal" begin
-    @test convert(SymTridiagonal{Float64},SymTridiagonal(ones(Float32,5),ones(Float32,4))) == SymTridiagonal(ones(Float64,5),ones(Float64,4))
-    @test convert(AbstractMatrix{Float64},SymTridiagonal(ones(Float32,5),ones(Float32,4))) == SymTridiagonal(ones(Float64,5),ones(Float64,4))
+    STF32 = SymTridiagonal{Float32}(fill(1f0, 5), fill(1f0, 4))
+    @test convert(SymTridiagonal{Float64}, STF32)::SymTridiagonal{Float64} == STF32
+    @test convert(AbstractMatrix{Float64}, STF32)::SymTridiagonal{Float64} == STF32
 end
 
 @testset "constructors from matrix" begin

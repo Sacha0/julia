@@ -609,8 +609,8 @@ end
     end
 
     @testset "Element promotion and type inference" begin
-        @inferred cholfact(As)\ones(Int, size(As, 1))
-        @inferred ldltfact(As)\ones(Int, size(As, 1))
+        @inferred cholfact(As)\fill(1, size(As, 1))
+        @inferred ldltfact(As)\fill(1, size(As, 1))
     end
 end
 
@@ -654,9 +654,9 @@ end
 end
 
 @testset "Issue with promotion during conversion to CHOLMOD.Dense" begin
-    @test SparseArrays.CHOLMOD.Dense(ones(Float32, 5)) == ones(5, 1)
-    @test SparseArrays.CHOLMOD.Dense(ones(Int, 5)) == ones(5, 1)
-    @test SparseArrays.CHOLMOD.Dense(ones(Complex{Float32}, 5, 2)) == ones(5, 2)
+    @test SparseArrays.CHOLMOD.Dense(fill(1, 5)) == fill(1, 5, 1)
+    @test SparseArrays.CHOLMOD.Dense(fill(1f0, 5)) == fill(1, 5, 1)
+    @test SparseArrays.CHOLMOD.Dense(fill(1f0 + 0im, 5, 2)) == fill(1, 5, 2)
 end
 
 @testset "Further issue with promotion #14894" begin

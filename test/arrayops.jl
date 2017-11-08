@@ -133,7 +133,7 @@ end
     end
 end
 @testset "reshape(a, Val(N))" begin
-    a = ones(Int,3,3)
+    a = fill(1,3,3)
     s = view(a, 1:2, 1:2)
     for N in (1,3)
         @test isa(reshape(a, Val(N)), Array{Int,N})
@@ -619,7 +619,7 @@ end
 
 @testset "repmat and repeat" begin
     local A, A1, A2, A3, v, v2, cv, cv2, c, R, T
-    A = ones(Int,2,3,4)
+    A = fill(1,2,3,4)
     A1 = reshape(repmat([1,2],1,12),2,3,4)
     A2 = reshape(repmat([1 2 3],2,4),2,3,4)
     A3 = reshape(repmat([1 2 3 4],6,1),2,3,4)
@@ -907,7 +907,7 @@ end
     @test_throws BoundsError A[[true, false, true], [false, true, true, false]]
     @test_throws BoundsError A[[true, false, true, true], [false, false, true, true, false]]
     @test_throws BoundsError A[[true, false, true], [false, false, true, true, false, true]]
-    A = ones(Int, 3, 5)
+    A = fill(1, 3, 5)
     @test_throws DimensionMismatch A[2,[true, false, true, true, false]] = 2:5
     A[2,[true, false, true, true, false]] = 2:4
     @test A == [1 1 1 1 1; 2 1 3 4 1; 1 1 1 1 1]
@@ -1989,7 +1989,7 @@ function f15894(d)
     end
     s
 end
-@test f15894(ones(Int, 100)) == 100
+@test f15894(fill(1, 100)) == 100
 end
 
 @testset "sign, conj, ~" begin
