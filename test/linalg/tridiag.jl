@@ -212,11 +212,12 @@ guardsrand(123) do
                     @test A*LowerTriangular(eye(n)) ≈ fA
                 end
                 @testset "A_mul_B! errors" begin
-                    @test_throws DimensionMismatch Base.LinAlg.A_mul_B!(zeros(fA),A,ones(elty,n,n+1))
-                    @test_throws DimensionMismatch Base.LinAlg.A_mul_B!(zeros(fA),A,ones(elty,n+1,n))
-                    @test_throws DimensionMismatch A_mul_B!(zeros(elty,n,n),B,ones(elty,n+1,n))
-                    @test_throws DimensionMismatch A_mul_B!(zeros(elty,n+1,n),B,ones(elty,n,n))
-                    @test_throws DimensionMismatch A_mul_B!(zeros(elty,n,n+1),B,ones(elty,n,n))
+                    Cnn, Cnm, Cmn = Matrix{elty}.(((n,n), (n,n+1), (n+1,n)))
+                    @test_throws DimensionMismatch Base.LinAlg.A_mul_B!(Cnn,A,Cnm)
+                    @test_throws DimensionMismatch Base.LinAlg.A_mul_B!(Cnn,A,Cmn)
+                    @test_throws DimensionMismatch A_mul_B!(Cnn,B,Cmn)
+                    @test_throws DimensionMismatch A_mul_B!(Cmn,B,Cnn)
+                    @test_throws DimensionMismatch A_mul_B!(Cnm,B,Cnn)
                 end
             end
             if mat_type == SymTridiagonal

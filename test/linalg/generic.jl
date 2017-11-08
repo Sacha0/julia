@@ -188,16 +188,10 @@ end
             @test scale!(copy(subB), 5.) == subB*5
             @test scale!([1.; 2.], copy(a)) == a.*[1; 2]
             @test scale!([1; 2], copy(a)) == a.*[1; 2]
-            @test_throws DimensionMismatch scale!(ones(3), a)
-            if isa(a, Array)
-                @test scale!(copy(a), [1.; 2.; 3.]) == a.*[1 2 3]
-                @test scale!(copy(a), [1; 2; 3]) == a.*[1 2 3]
-                @test_throws DimensionMismatch scale!(a, ones(2))
-            else
-                @test scale!(copy(a), [1.; 2.]) == a.*[1 2]
-                @test scale!(copy(a), [1; 2]) == a.*[1 2]
-                @test_throws DimensionMismatch scale!(a, ones(3))
-            end
+            @test scale!(copy(a), Vector(1.:an)) == a.*Vector(1:an)'
+            @test scale!(copy(a), Vector(1:an)) == a.*Vector(1:an)'
+            @test_throws DimensionMismatch scale!(Vector{Float64}(am+1), a)
+            @test_throws DimensionMismatch scale!(a, Vector{Float64}(an+1))
         end
 
         @testset "3-argument version of scale!" begin
@@ -205,18 +199,11 @@ end
             @test scale!(similar(a), a, 5.) == a*5
             @test scale!(similar(a), [1.; 2.], a) == a.*[1; 2]
             @test scale!(similar(a), [1; 2], a) == a.*[1; 2]
-            @test_throws DimensionMismatch scale!(similar(a), ones(3), a)
-            @test_throws DimensionMismatch scale!(Array{Float64}(3, 2), a, ones(3))
-
-            if isa(a, Array)
-                @test scale!(similar(a), a, [1.; 2.; 3.]) == a.*[1 2 3]
-                @test scale!(similar(a), a, [1; 2; 3]) == a.*[1 2 3]
-                @test_throws DimensionMismatch scale!(similar(a), a, ones(2))
-            else
-                @test scale!(similar(a), a, [1.; 2.]) == a.*[1 2]
-                @test scale!(similar(a), a, [1; 2]) == a.*[1 2]
-                @test_throws DimensionMismatch scale!(similar(a), a, ones(3))
-            end
+            @test_throws DimensionMismatch scale!(similar(a), Vector{Float64}(am+1), a)
+            @test_throws DimensionMismatch scale!(similar(a), a, Vector{Float64}(an+1))
+            @test_throws DimensionMismatch scale!(Matrix{Float64}(3, 2), a, Vector{Float64}(an))
+            @test scale!(similar(a), a, Vector(1.:an)) == a.*Vector(1:an)'
+            @test scale!(similar(a), a, Vector(1:an)) == a.*Vector(1:an)'
         end
     end
 end
@@ -267,7 +254,7 @@ end
 
 @test norm([2.4e-322, 4.4e-323]) ≈ 2.47e-322
 @test norm([2.4e-322, 4.4e-323], 3) ≈ 2.4e-322
-@test_throws ArgumentError norm(ones(5,5),5)
+@test_throws ArgumentError norm(Matrix{Float64}(5,5),5)
 
 @testset "generic vecnorm for arrays of arrays" begin
     x = Vector{Int}[[1,2], [3,4]]

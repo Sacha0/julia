@@ -61,7 +61,7 @@ a2img  = randn(n,n)/2
             @test usv\b ≈ a\b
 
             if eltya <: BlasFloat
-                svdz = svdfact!(ones(eltya,0,0))
+                svdz = svdfact!(Matrix{eltya}(0,0))
                 @test svdz[:U] ≈ eye(eltya,0,0)
                 @test svdz[:S] ≈ real(zeros(eltya,0))
                 @test svdz[:Vt] ≈ eye(eltya,0,0)

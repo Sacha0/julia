@@ -241,7 +241,7 @@ for elty1 in (Float32, Float64, BigFloat, Complex64, Complex128, Complex{BigFloa
         @test sqrt(A1) |> t -> t*t ≈ A1
 
         # naivesub errors
-        @test_throws DimensionMismatch naivesub!(A1,ones(elty1,n+1))
+        @test_throws DimensionMismatch naivesub!(A1,Vector{elty1}(n+1))
 
         # eigenproblems
         if !(elty1 in (BigFloat, Complex{BigFloat})) # Not handled yet
@@ -355,12 +355,13 @@ for elty1 in (Float32, Float64, BigFloat, Complex64, Complex128, Complex{BigFloa
                 @test At_mul_B!(zeros(B1),A1,B1) ≈ A1.'*B1
             end
             #error handling
-            @test_throws DimensionMismatch Base.LinAlg.A_mul_B!(A1, ones(eltyB,n+1))
-            @test_throws DimensionMismatch Base.LinAlg.A_mul_B!(ones(eltyB,n+1,n+1), A1)
-            @test_throws DimensionMismatch Base.LinAlg.At_mul_B!(A1, ones(eltyB,n+1))
-            @test_throws DimensionMismatch Base.LinAlg.Ac_mul_B!(A1, ones(eltyB,n+1))
-            @test_throws DimensionMismatch Base.LinAlg.A_mul_Bc!(ones(eltyB,n+1,n+1),A1)
-            @test_throws DimensionMismatch Base.LinAlg.A_mul_Bt!(ones(eltyB,n+1,n+1),A1)
+            Ann, Bmm, bm = A1, Matrix{eltyB}(n+1, n+1), Vector{eltyB}(n+1)
+            @test_throws DimensionMismatch Base.LinAlg.A_mul_B!(Ann, bm)
+            @test_throws DimensionMismatch Base.LinAlg.A_mul_B!(Bmm, Ann)
+            @test_throws DimensionMismatch Base.LinAlg.At_mul_B!(Ann, bm)
+            @test_throws DimensionMismatch Base.LinAlg.Ac_mul_B!(Ann, bm)
+            @test_throws DimensionMismatch Base.LinAlg.A_mul_Bc!(Bmm, Ann)
+            @test_throws DimensionMismatch Base.LinAlg.A_mul_Bt!(Bmm, Ann)
 
             # ... and division
             @test A1\B[:,1] ≈ Matrix(A1)\B[:,1]
@@ -373,9 +374,10 @@ for elty1 in (Float32, Float64, BigFloat, Complex64, Complex128, Complex{BigFloa
             @test A1\B' ≈ Matrix(A1)\B'
             @test A1.'\B.' ≈ Matrix(A1).'\B.'
             @test A1'\B' ≈ Matrix(A1)'\B'
-            @test_throws DimensionMismatch A1\ones(elty1,n+2)
-            @test_throws DimensionMismatch A1'\ones(elty1,n+2)
-            @test_throws DimensionMismatch A1.'\ones(elty1,n+2)
+            Ann, bm = A1, Vector{elty1}(n+1)
+            @test_throws DimensionMismatch Ann\bm
+            @test_throws DimensionMismatch Ann'\bm
+            @test_throws DimensionMismatch Ann.'\bm
             if t1 == UpperTriangular || t1 == LowerTriangular
                 @test_throws Base.LinAlg.SingularException naivesub!(t1(zeros(elty1,n,n)),ones(eltyB,n))
             end

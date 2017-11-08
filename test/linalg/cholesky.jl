@@ -158,7 +158,7 @@ end
                     @test norm(apd * (lapd\b) - b)/norm(b) <= ε*κ*n
                     @test norm(apd * (lapd\b[1:n]) - b[1:n])/norm(b[1:n]) <= ε*κ*n
                 end
-                @test_throws DimensionMismatch cholfact(apdhL)\RowVector(ones(n))
+                @test_throws DimensionMismatch cholfact(apdhL)\RowVector(Vector{Float64}(n))
 
                 if eltya != BigFloat && eltyb != BigFloat # Note! Need to implement pivoted Cholesky decomposition in julia
 
@@ -170,7 +170,7 @@ end
                     @test norm(apd * (lpapd\b) - b)/norm(b) <= ε*κ*n # Ad hoc, revisit
                     @test norm(apd * (lpapd\b[1:n]) - b[1:n])/norm(b[1:n]) <= ε*κ*n
 
-                    @test_throws BoundsError lpapd\RowVector(ones(n))
+                    @test_throws BoundsError lpapd\RowVector(Vector{Float64}(n))
                 end
             end
         end
@@ -223,9 +223,9 @@ end
         F = cholfact(Hermitian(AcA, uplo))
         G = cholfact(Hermitian(BcB, uplo))
         @test LinAlg.lowrankupdate(F, v)[uplo] ≈ G[uplo]
-        @test_throws DimensionMismatch LinAlg.lowrankupdate(F, ones(eltype(v), length(v)+1))
+        @test_throws DimensionMismatch LinAlg.lowrankupdate(F, Vector{eltype(v)}(length(v)+1))
         @test LinAlg.lowrankdowndate(G, v)[uplo] ≈ F[uplo]
-        @test_throws DimensionMismatch LinAlg.lowrankdowndate(G, ones(eltype(v), length(v)+1))
+        @test_throws DimensionMismatch LinAlg.lowrankdowndate(G, Vector{eltype(v)}(length(v)+1))
     end
 end
 

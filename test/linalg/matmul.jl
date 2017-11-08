@@ -5,13 +5,16 @@ using Test
 ## Test Julia fallbacks to BLAS routines
 
 @testset "matrices with zero dimensions" begin
-    @test ones(0,5)*ones(5,3) == zeros(0,3)
-    @test ones(3,5)*ones(5,0) == zeros(3,0)
-    @test ones(3,0)*ones(0,4) == zeros(3,4)
-    @test ones(0,5)*ones(5,0) == zeros(0,0)
-    @test ones(0,0)*ones(0,4) == zeros(0,4)
-    @test ones(3,0)*ones(0,0) == zeros(3,0)
-    @test ones(0,0)*ones(0,0) == zeros(0,0)
+    for (dimsA, dimsB, dimsC) in (
+            ((0,5), (5,3), (0,3)),
+            ((3,5), (5,0), (3,0)),
+            ((3,0), (0,4), (3,4)),
+            ((0,5), (5,0), (0,0)),
+            ((0,0), (0,4), (0,4)),
+            ((3,0), (0,0), (3,0)),
+            ((0,0), (0,0), (0,0)) )
+        @test Matrix{Float64}(dimsA) * Matrix{Float64}(dimsB) == zeros(dimsC)
+    end
     @test Array{Float64}(5, 0) |> t -> t't == zeros(0,0)
     @test Array{Float64}(5, 0) |> t -> t*t' == zeros(5,5)
     @test Array{Complex128}(5, 0) |> t -> t't == zeros(0,0)
@@ -35,8 +38,7 @@ end
         @test Ac_mul_Bc(Ai, Bi) == [-28.25-66im 9.75-58im; -26-89im 21-73im]
         @test_throws DimensionMismatch [1 2; 0 0; 0 0] * [1 2]
     end
-    CC = ones(3, 3)
-    @test_throws DimensionMismatch A_mul_B!(CC, AA, BB)
+    @test_throws DimensionMismatch A_mul_B!(Matrix{Float64}(3,3), AA, BB)
 end
 @testset "3x3 matmul" begin
     AA = [1 2 3; 4 5 6; 7 8 9].-5
@@ -56,8 +58,7 @@ end
         @test Ac_mul_Bc(Ai, Bi) == [1+2im 20.75+9im -44.75+42im; 19.5+17.5im -54-36.5im 51-14.5im; 13+7.5im 11.25+31.5im -43.25-14.5im]
         @test_throws DimensionMismatch [1 2 3; 0 0 0; 0 0 0] * [1 2 3]
     end
-    CC = ones(4, 4)
-    @test_throws DimensionMismatch A_mul_B!(CC, AA, BB)
+    @test_throws DimensionMismatch A_mul_B!(Matrix{Float64}(4,4), AA, BB)
 end
 
 # Generic AbstractArrays
@@ -189,8 +190,9 @@ end
     Aref = Ai[1:2:2*cutoff, 1:3]
     @test Ac_mul_B(Asub, Asub) == Ac_mul_B(Aref, Aref)
 
-    @test_throws DimensionMismatch Base.LinAlg.syrk_wrapper!(zeros(5,5),'N',ones(6,5))
-    @test_throws DimensionMismatch Base.LinAlg.herk_wrapper!(zeros(5,5),'N',ones(6,5))
+    A5x5, A6x5 = Matrix{Float64}.(((5, 5), (6, 5)))
+    @test_throws DimensionMismatch Base.LinAlg.syrk_wrapper!(A5x5,'N',A6x5)
+    @test_throws DimensionMismatch Base.LinAlg.herk_wrapper!(A5x5,'N',A6x5)
 end
 
 @testset "matmul for types w/o sizeof (issue #1282)" begin
@@ -202,11 +204,9 @@ end
 end
 
 @testset "scale!" begin
-    AA = zeros(5, 5)
-    BB = ones(5)
-    CC = rand(5, 6)
-    for A in (copy(AA), view(AA, 1:5, 1:5)), B in (copy(BB), view(BB, 1:5)), C in (copy(CC), view(CC, 1:5, 1:6))
-        @test_throws DimensionMismatch scale!(A, B, C)
+    A5x5, b5, C5x6 = Array{Float64}.(((5,5), 5, (5,6)))
+    for A in (A5x5, view(A5x5, :, :)), b in (b5,  view(b5, :)), C in (C5x6, view(C5x6, :, :))
+        @test_throws DimensionMismatch scale!(A, b, C)
     end
 end
 
@@ -258,13 +258,14 @@ end
     @test A*b == Vector{Float64}[[2,2,1], [2,2]]
 end
 
-@test_throws ArgumentError Base.LinAlg.copytri!(ones(10,10),'Z')
+@test_throws ArgumentError Base.LinAlg.copytri!(Matrix{Float64}(10,10),'Z')
 
 @testset "gemv! and gemm_wrapper for $elty" for elty in [Float32,Float64,Complex128,Complex64]
-    @test_throws DimensionMismatch Base.LinAlg.gemv!(ones(elty,10),'N',rand(elty,10,10),ones(elty,11))
-    @test_throws DimensionMismatch Base.LinAlg.gemv!(ones(elty,11),'N',rand(elty,10,10),ones(elty,10))
-    @test Base.LinAlg.gemv!(ones(elty,0),'N',rand(elty,0,0),rand(elty,0)) == ones(elty,0)
-    @test Base.LinAlg.gemv!(ones(elty,10), 'N',ones(elty,10,0),ones(elty,0)) == zeros(elty,10)
+    A10x10, x10, x11 = Array{elty}.(((10,10), 10, 11))
+    @test_throws DimensionMismatch Base.LinAlg.gemv!(x10,'N',A10x10,x11)
+    @test_throws DimensionMismatch Base.LinAlg.gemv!(x11,'N',A10x10,x10)
+    @test Base.LinAlg.gemv!(elty[], 'N', Matrix{elty}(0,0), elty[]) == elty[]
+    @test Base.LinAlg.gemv!(x10, 'N', Matrix{elty}(10,0), elty[]) == zeros(elty,10)
 
     @test Base.LinAlg.gemm_wrapper('N','N',eye(elty,10,10),eye(elty,10,10)) == eye(elty,10,10)
     @test_throws DimensionMismatch Base.LinAlg.gemm_wrapper!(eye(elty,10,10),'N','N',eye(elty,10,11),eye(elty,10,10))

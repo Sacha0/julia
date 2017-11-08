@@ -1481,10 +1481,10 @@ end
     @test mdsum(a) == 2
     @test mdsum2(a) == 2
 
-    a = ones(0,5)
+    a = Matrix{Float64}(0,5)
     b = view(a, :, :)
     @test mdsum(b) == 0
-    a = ones(5,0)
+    a = Matrix{Float64}(5,0)
     b = view(a, :, :)
     @test mdsum(b) == 0
 end

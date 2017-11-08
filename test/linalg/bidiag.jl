@@ -172,15 +172,17 @@ srand(1)
                 @test norm(x-tx,Inf) <= 4*condT*max(eps()*norm(tx,Inf), eps(promty)*norm(x,Inf))
                 @test_throws DimensionMismatch T\b.'
             end
-            @test_throws DimensionMismatch T \ ones(elty,n+1,2)
-            @test_throws DimensionMismatch T.' \ ones(elty,n+1,2)
-            @test_throws DimensionMismatch T' \ ones(elty,n+1,2)
+            offsizemat = Matrix{elty}(n+1, 2)
+            @test_throws DimensionMismatch T \ offsizemat
+            @test_throws DimensionMismatch T.' \ offsizemat
+            @test_throws DimensionMismatch T' \ offsizemat
 
-            @test_throws DimensionMismatch T \ RowVector(ones(elty,n+1))
-            @test_throws DimensionMismatch T.' \ RowVector(ones(elty,n+1))
-            @test_throws DimensionMismatch T' \ RowVector(ones(elty,n+1))
-            @test_throws DimensionMismatch Base.LinAlg.At_ldiv_B(T, RowVector(ones(elty,n+1)))
-            @test_throws DimensionMismatch Base.LinAlg.Ac_ldiv_B(T, RowVector(ones(elty,n+1)))
+            offsizerowvec = RowVector(Vector{elty}(n+1))
+            @test_throws DimensionMismatch T \ offsizerowvec
+            @test_throws DimensionMismatch T.' \ offsizerowvec
+            @test_throws DimensionMismatch T' \ offsizerowvec
+            @test_throws DimensionMismatch Base.LinAlg.At_ldiv_B(T, offsizerowvec)
+            @test_throws DimensionMismatch Base.LinAlg.Ac_ldiv_B(T, offsizerowvec)
             let bb = b, cc = c
                 for atype in ("Array", "SubArray")
                     if atype == "Array"
@@ -193,7 +195,7 @@ srand(1)
                 end
                 x = T \ b
                 tx = Tfull \ b
-                @test_throws DimensionMismatch Base.LinAlg.naivesub!(T,ones(elty,n+1))
+                @test_throws DimensionMismatch Base.LinAlg.naivesub!(T,Vector{elty}(n+1))
                 @test norm(x-tx,Inf) <= 4*condT*max(eps()*norm(tx,Inf), eps(promty)*norm(x,Inf))
                 @testset "Generic Mat-vec ops" begin
                     @test T*b ≈ Tfull*b

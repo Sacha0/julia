@@ -111,7 +111,7 @@ srand(1)
                 @test A_rdiv_Bt!(Uc, D) ≈ target atol=atol_three
                 @test A_rdiv_Bc!(Uc, conj(D)) ≈ target atol=atol_three
                 @test A_ldiv_B!(D, eye(D)) ≈ D\eye(D) atol=atol_three
-                @test_throws DimensionMismatch A_ldiv_B!(D, ones(elty, n + 1))
+                @test_throws DimensionMismatch A_ldiv_B!(D, Vector{elty}(n+1))
                 @test_throws SingularException A_ldiv_B!(Diagonal(zeros(relty, n)), copy(v))
                 b = rand(elty, n, n)
                 b = sparse(b)
