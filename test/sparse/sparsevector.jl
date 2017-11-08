@@ -1202,21 +1202,21 @@ end
     simA = similar(A, (6,6))
     @test typeof(simA) == SparseMatrixCSC{eltype(A.nzval),eltype(A.nzind)}
     @test size(simA) == (6,6)
-    @test simA.colptr == ones(eltype(A.nzind), 6+1)
+    @test simA.colptr == fill(1, 6+1)
     @test length(simA.rowval) == length(A.nzind)
     @test length(simA.nzval) == length(A.nzval)
     # test similar with entry type and Dims{2} specification (preserves storage space only)
     simA = similar(A, Float32, (6,6))
     @test typeof(simA) == SparseMatrixCSC{Float32,eltype(A.nzind)}
     @test size(simA) == (6,6)
-    @test simA.colptr == ones(eltype(A.nzind), 6+1)
+    @test simA.colptr == fill(1, 6+1)
     @test length(simA.rowval) == length(A.nzind)
     @test length(simA.nzval) == length(A.nzval)
     # test similar with entry type, index type, and Dims{2} specification (preserves storage space only)
     simA = similar(A, Float32, Int8, (6,6))
     @test typeof(simA) == SparseMatrixCSC{Float32, Int8}
     @test size(simA) == (6,6)
-    @test simA.colptr == ones(eltype(A.nzind), 6+1)
+    @test simA.colptr == fill(1, 6+1)
     @test length(simA.rowval) == length(A.nzind)
     @test length(simA.nzval) == length(A.nzval)
 end

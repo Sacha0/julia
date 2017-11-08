@@ -1341,9 +1341,9 @@ end
 end
 
 @testset "sparsevec" begin
-    local A = sparse(ones(5, 5))
-    @test all(Array(sparsevec(A)) .== ones(25))
-    @test all(Array(sparsevec([1:5;], 1)) .== ones(5))
+    local A = sparse(fill(1, 5, 5))
+    @test sparsevec(A) == fill(1, 25)
+    @test sparsevec([1:5;], 1) == fill(1, 5)
     @test_throws ArgumentError sparsevec([1:5;], [1:4;])
 end
 
@@ -2099,21 +2099,21 @@ end
     simA = similar(A, (6,6))
     @test typeof(simA) == typeof(A)
     @test size(simA) == (6,6)
-    @test simA.colptr == ones(eltype(A.colptr), 6+1)
+    @test simA.colptr == fill(1, 6+1)
     @test length(simA.rowval) == length(A.rowval)
     @test length(simA.nzval) == length(A.nzval)
     # test similar with entry type and Dims{2} specification (preserves storage space only)
     simA = similar(A, Float32, (6,6))
     @test typeof(simA) == SparseMatrixCSC{Float32,eltype(A.colptr)}
     @test size(simA) == (6,6)
-    @test simA.colptr == ones(eltype(A.colptr), 6+1)
+    @test simA.colptr == fill(1, 6+1)
     @test length(simA.rowval) == length(A.rowval)
     @test length(simA.nzval) == length(A.nzval)
     # test similar with entry type, index type, and Dims{2} specification (preserves storage space only)
     simA = similar(A, Float32, Int8, (6,6))
     @test typeof(simA) == SparseMatrixCSC{Float32, Int8}
     @test size(simA) == (6,6)
-    @test simA.colptr == ones(eltype(A.colptr), 6+1)
+    @test simA.colptr == fill(1, 6+1)
     @test length(simA.rowval) == length(A.rowval)
     @test length(simA.nzval) == length(A.nzval)
     # test similar with Dims{1} specification (preserves nothing)
