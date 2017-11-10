@@ -2141,6 +2141,36 @@ end
     @test similar(A, Float32, Int8, 6) == similar(A, Float32, Int8, (6,))
 end
 
+@testset "flip over `SparseMatrixCSC`s" begin
+    # matrices with numeric entries
+    A = SparseMatrixCSC([1 2; 3 4; 5 6])
+    fA = SparseMatrixCSC([1 3 5; 2 4 6])
+    @test flip(A)::SparseMatrixCSC{Int} == fA
+    @test flip(fA)::SparseMatrixCSC{Int} == A
+    # matrices with non-numeric entries
+    A = SparseMatrixCSC(['a' 'b'; 'c' 'd'; 'e' 'f'])
+    fA = SparseMatrixCSC(['a' 'c' 'e'; 'b' 'd' 'f'])
+    @test flip(A)::SparseMatrixCSC{Char} == fA
+    @test flip(fA)::SparseMatrixCSC{Char} == A
+end
+
+@testset "flip over `SparseVector`s" begin
+    # vectors with numeric entries
+    x = SparseVector([1, 2, 3, 4])
+    fx = SparseMatrixCSC([1 2 3 4])
+    @test flip(x)::SparseMatrixCSC{Int} == fx
+    @test all(flip(fx) .== x)
+    @test size(flip(fx)) == (length(x), 1)
+    @test isa(flip(fx), SparseMatrixCSC{Int,Int})
+    # vectors with non-numeric entries
+    x = SparseVector(['a', 'b', 'c', 'd'])
+    fx = SparseMatrixCSC(['a' 'b' 'c' 'd'])
+    @test flip(x)::SparseMatrixCSC{Char} == fx
+    @test flip(fx).nzval[1:nnz(flip(fx))] == x.nzval
+    @test size(flip(fx)) == (length(x), 1)
+    @test isa(flip(fx), SparseMatrixCSC{Char,Int})
+end
+
 @testset "count specializations" begin
     # count should throw for sparse arrays for which zero(eltype) does not exist
     @test_throws MethodError count(SparseMatrixCSC(2, 2, Int[1, 2, 3], Int[1, 2], Any[true, true]))

@@ -2022,3 +2022,20 @@ function hash(a::AbstractArray, h::UInt)
     !isequal(x2, x1) && (h = hash(x2, h))
     return h
 end
+
+# flip
+
+"""
+    flip(A::AbstractMatrix)
+
+Flip `A` across its main diagonal. In other words, return a matrix identical to `A` but
+with its dimensions swapped. Equivalent to [`permutedims`](@ref)`(A, (2, 1))` in general.
+"""
+flip(A::AbstractMatrix) = permutedims(A, (2, 1))
+
+"""
+    flip(x::AbstractVector)
+
+Return a `1`-by-`length(x)` (single-row) matrix containing the values in `x`.
+"""
+flip(x::AbstractVector) = copy(reshape(x, (1, length(x)))) # copy!(similar(x, (1, length(x))), x)

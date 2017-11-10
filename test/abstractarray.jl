@@ -873,6 +873,36 @@ end
     @test isa(similar(Dict(:a=>1, :b=>2.0), Pair{Union{},Union{}}), Dict{Union{}, Union{}})
 end
 
+@testset "flip over `Matrix`s" begin
+    # matrices with numeric entries
+    A = [1 2; 3 4; 5 6]
+    fA = [1 3 5; 2 4 6]
+    @test flip(A)::Matrix{Int} == fA
+    @test flip(fA)::Matrix{Int} == A
+    # matrices with non-numeric entries
+    A = ['a' 'b'; 'c' 'd'; 'e' 'f']
+    fA = ['a' 'c' 'e'; 'b' 'd' 'f']
+    @test flip(A)::Matrix{Char} == fA
+    @test flip(fA)::Matrix{Char} == A
+end
+
+@testset "flip over `Vector`s" begin
+    # vectors with numeric entries
+    x = [1, 2, 3, 4];
+    fx = [1 2 3 4]
+    @test flip(x)::Matrix{Int} == fx
+    @test all(flip(fx) .== x)
+    @test isa(flip(fx), Matrix{Int})
+    @test size(flip(fx)) == (length(x), 1)
+    # vectors with non-numeric entries
+    x = ['a', 'b', 'c', 'd']
+    fx = ['a' 'b' 'c' 'd']
+    @test flip(x)::Matrix{Char} == fx
+    @test all(flip(fx) .== x)
+    @test isa(flip(fx), Matrix{Char})
+    @test size(flip(fx)) == (length(x), 1)
+end
+
 @testset "zero-dimensional copy" begin
     Z = Array{Int}(); Z[] = 17
     @test Z == collect(Z) == copy(Z)
